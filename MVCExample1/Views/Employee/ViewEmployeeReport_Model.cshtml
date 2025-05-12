@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewData["Title"] = "ViewEmployeeReport_Model";
+}
+
+<h1>View Employee Report using Model</h1>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>All Employees</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box; /* Ensures padding is included in width */
+        }
+    </style>
+</head>
+<body>
+
+
+    <table id="reportTable">
+        <thead>
+            <!-- Headers will be dynamically added here -->
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+    <script>
+
+        window.onload = function () {
+            viewreport();
+        };
+
+        function viewreport() {
+            fetchapiGet();
+        }
+
+
+        function fetchapiGet() {
+                    debugger;
+            var flag = "GetAllEmployeeDetails";
+
+            var indata = flag
+            var data = '';
+            $.ajax({
+                type: "GET",
+                url: '/Employee/getAPIData_model',
+                        data: { datas: indata },
+                        async: false,
+                        success: function (response) {
+                            LoadReport(response);
+                        },
+                        error: function (response) {
+                            check = 0;
+                        }
+                    });
+                }
+        function LoadReport(data) {
+            debugger;
+            const reportTable = document.getElementById('reportTable');
+            const tbody = reportTable.querySelector('tbody');
+            const thead = reportTable.querySelector('thead');
+
+            // Clear existing rows and headers
+            tbody.innerHTML = '';
+            thead.innerHTML = '';
+
+            // Check if data is valid
+            if (Array.isArray(data) && data.length > 0) {
+                // Create table headers dynamically
+                const headerRow = document.createElement('tr');
+                Object.keys(data[0]).forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key; // Use the key as the header
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+
+                // Populate the table with new rows
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+
+                    // Create cells for each property in the item
+                    Object.values(item).forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value; // Set the cell text to the value
+                        row.appendChild(cell);
+                    });
+
+                    // Append the row to the table body
+                    tbody.appendChild(row);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+
+

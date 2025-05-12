@@ -1,0 +1,147 @@
+﻿@{
+    ViewData["Title"] = "Search";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Search Employee</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        select{
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <select id="searchEmp" onchange="FetchEmployee()">
+        <option value="">Select Employee</option>
+    </select><br /><br />
+
+    <div class="form-container">
+        
+            <label for="empId">ID:</label>
+            <input type="text" id="empId" name="empId" readonly>
+            <label for="empName">Name:</label>
+            <input type="text" id="empName" name="empName">
+            <label for="empDesignation">Designation:</label>
+            <input type="text" id="empDesignation" name="empDesignation">
+            <label for="empDepartment">Department:</label>
+            <input type="text" id="empDepartment" name="empDepartment">
+        
+    </div>
+
+    <script>
+        window.onload = function () {
+            viewreport();
+        };
+
+        function viewreport() {
+            fetchapiGet();
+        }
+
+        function fetchapiGet() {
+            var flag = "GetAllEmployeeIDName";
+            var indata = flag;
+            $.ajax({
+                type: "GET",
+                url: '/Employee/getAPIData',
+                data: { datas: indata },
+                async: false,
+                success: function (response) {
+                    var data = JSON.parse(response);
+                    LoadReport(data);
+                },
+                error: function (response) {
+                    console.error("Error fetching data", response);
+                }
+            });
+        }
+
+        function LoadReport(data) {
+            const searchEmpSelect = document.getElementById('searchEmp');
+
+            // Clear existing options
+            searchEmpSelect.innerHTML = '<option value="">Select Employee</option>';
+            console.log(data);
+            // Check if data is valid
+            if (Array.isArray(data) && data.length > 0) {
+                // Populate the dropdown with new options
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id; // Set the value to the employee ID
+                    option.textContent = `${item.id}----${item.name}`; // Set the display text
+                    searchEmpSelect.appendChild(option);
+                });
+            }
+        }
+        function FetchEmployee(){
+            const employeeSelect = document.getElementById('searchEmp');
+            const selectedValue = employeeSelect.value;
+            fetchapiGet2(selectedValue);
+        }
+
+        function fetchapiGet2(selectedValue){
+            debugger;
+            var flag = "SearchById";
+            var indata = flag + "/" + selectedValue;
+            $.ajax({
+                type: "GET",
+                url: '/Employee/getAPIData',
+                data: { datas: indata },
+                success: function (response) {
+                    var data = JSON.parse(response);
+                    LoadDataTextBox(data);
+                },
+                error: function (response) {
+                    console.error("Error fetching data", response);
+                }
+            });
+        }
+        function LoadDataTextBox(data){
+            debugger;
+            if(data.length>0){
+                document.getElementById("empId").value = data[0].id;
+                document.getElementById("empName").value = data[0].name;
+                document.getElementById("empDesignation").value = data[0].designation;
+                document.getElementById("empDepartment").value = data[0].department;
+            }
+        }
+    </script>
+</body>
+</html>

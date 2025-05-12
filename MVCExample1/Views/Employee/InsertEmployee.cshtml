@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewData["Title"] = "InsertEmployee";
+}
+
+<h1>Insert Employee</h1>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Search Employee</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+    <body>
+    <div class="form-container">
+
+        <form id="employeeForm">
+
+            <label for="empId" onclick="">ID:</label>
+            <input type="text" id="empId" name="empId">
+            <label for="empName">Name:</label>
+            <input type="text" id="empName" name="empName">
+            <label for="empDesignation">Designation:</label>
+            <input type="text" id="empDesignation" name="empDesignation">
+            <label for="empDepartment">Department:</label>
+            <input type="text" id="empDepartment" name="empDepartment"><br />
+            <button type="submit" onclick="insert()">Submit</button>
+
+        </form>
+
+    </div>
+
+    <script>
+        function insert(){
+            var emp_number = document.getElementById("empId").value;
+            var emp_name = document.getElementById("empName").value;
+            var desig = document.getElementById("empDesignation").value;
+            var dept = document.getElementById("empDepartment").value;
+            fetchApiPost(emp_number,emp_name,desig,dept);
+        }
+
+        function fetchApiPost(emp_number,emp_name,desig,dept){
+            flag = "insertEmployee";
+            var indata = flag + '$' +emp_number + "~" +emp_name + "~" +desig + "~" +dept;
+            $.ajax({
+                type: "POST",
+                url: '/Employee/postAPIData',
+                data: {datas: indata},
+                async: false,
+                success: function (response){
+                    alert(response);
+                },
+                error: function (response){
+                    check = 0;
+                }
+
+            });
+        }
+    </script>
+
+    </body>
+</html>
+
